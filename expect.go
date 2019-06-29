@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"reflect"
 	"strings"
+
+	"github.com/ghodss/yaml"
 )
 
 // NamedValue creates an expectation for the provided value with given
@@ -28,9 +30,9 @@ func (e Value) ToBe(expected interface{}) Value {
 	if !reflect.DeepEqual(e.value, expected) {
 		if needsFormating(e.value) {
 			// if it's a "complex" type we try to print the value as formated yaml
-			exp, erre := json.MarshalIndent(expected, "--", "  ")
-			val, errv := json.MarshalIndent(e.value, "--", "  ")
-			if erre != nil || errv != nil {
+			exp, erre := yaml.Marshal(expected)
+			val, errv := yaml.Marshal(e.value)
+			if erre == nil && errv == nil {
 				e.t.Errorf("expected %v to be:\n%v\nbut it is:\n%v", e.name, string(exp), string(val))
 				return e
 			}
