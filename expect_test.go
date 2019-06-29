@@ -34,3 +34,13 @@ func TestToFailToCountString(t *testing.T) {
 	expect.NamedValue(t, "errors", l.Messages).ToCount(1)
 	expect.NamedValue(t, "error", l.Messages[0]).ToBe("expected foo to have 1 elements but it has 3 elements")
 }
+
+func TestToHavePrefix(t *testing.T) {
+	expect.NamedValue(t, "statement", "we are all crazy").ToHavePrefix("we are")
+}
+
+func TestFailToHavePrefix(t *testing.T) {
+	l := &test.Logger{}
+	expect.NamedValue(l, "statement", "we are all crazy").ToHavePrefix("i am")
+	expect.NamedValue(t, "error", l.Messages[0]).ToBe("expected statement to have prefix 'i am' but it is 'we are all crazy'")
+}

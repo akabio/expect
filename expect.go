@@ -3,6 +3,7 @@ package expect
 import (
 	"encoding/json"
 	"reflect"
+	"strings"
 )
 
 // NamedValue creates an expectation for the provided value with given
@@ -55,6 +56,30 @@ func (e Value) ToCount(c int) Value {
 	return e
 }
 
+// NotToBe asserts that the value is not deeply equals to expected value.
+func (e Value) NotToBe(unExpected interface{}) Value {
+	if reflect.DeepEqual(e.value, unExpected) {
+		exp, err := json.MarshalIndent(unExpected, "--", "  ")
+		if err != nil {
+			e.t.Errorf("expected %v to NOT be '%v' but it is", e.name, unExpected)
+		} else {
+			e.t.Errorf("expected %v to NOT be:\n%v\nbut it is", e.name, string(exp))
+		}
+	}
+	return e
+}
+
+func (e Value) ToHavePrefix(prefix string) Value {
+	actual, is := e.value.(string)
+	if !is {
+		e.t.Fatalf("ToHavePrefix must only be called on a string value")
+	}
+	if !strings.HasPrefix(actual, prefix) {
+		e.t.Errorf("expected %v to have prefix '%v' but it is '%v'", e.name, prefix, actual)
+	}
+	return e
+}
+
 func hasLen(v interface{}) bool {
 	switch reflect.TypeOf(v).Kind() {
 	case reflect.Array:
@@ -83,17 +108,4 @@ func needsFormating(v interface{}) bool {
 		return true
 	}
 	return false
-}
-
-// NotToBe asserts that the value is not deeply equals to expected value.
-func (e Value) NotToBe(unExpected interface{}) Value {
-	if reflect.DeepEqual(e.value, unExpected) {
-		exp, err := json.MarshalIndent(unExpected, "--", "  ")
-		if err != nil {
-			e.t.Errorf("expected %v to NOT be '%v' but it is", e.name, unExpected)
-		} else {
-			e.t.Errorf("expected %v to NOT be:\n%v\nbut it is", e.name, string(exp))
-		}
-	}
-	return e
 }
