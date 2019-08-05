@@ -8,25 +8,25 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-// NamedValue creates an expectation for the provided value with given
+// Value creates an expectation for the provided value with given
 // name for reporting.
-func NamedValue(t Test, n string, val interface{}) Value {
-	return Value{
-		name:  n,
+func Value(t Test, name string, val interface{}) Val {
+	return Val{
+		name:  name,
 		t:     t,
 		value: val,
 	}
 }
 
-// Value to assert expectations on.
-type Value struct {
+// Val to test expectations against.
+type Val struct {
 	name  string
 	t     Test
 	value interface{}
 }
 
 // ToBe asserts that the value is deeply equals to expected value.
-func (e Value) ToBe(expected interface{}) Value {
+func (e Val) ToBe(expected interface{}) Val {
 	if !reflect.DeepEqual(e.value, expected) {
 		if needsFormating(e.value) {
 			// if it's a "complex" type we try to print the value as formated yaml
@@ -44,7 +44,7 @@ func (e Value) ToBe(expected interface{}) Value {
 }
 
 // ToCount asserts that the list/map/chan/string has c elements.
-func (e Value) ToCount(c int) Value {
+func (e Val) ToCount(c int) Val {
 	if !hasLen(e.value) {
 		e.t.Fatalf("%v is not a datatype with a length (array, slice, map, chan, string)", e.name)
 		return e
@@ -59,7 +59,7 @@ func (e Value) ToCount(c int) Value {
 }
 
 // NotToBe asserts that the value is not deeply equals to expected value.
-func (e Value) NotToBe(unExpected interface{}) Value {
+func (e Val) NotToBe(unExpected interface{}) Val {
 	if reflect.DeepEqual(e.value, unExpected) {
 		exp, err := json.MarshalIndent(unExpected, "--", "  ")
 		if err != nil {
@@ -71,7 +71,8 @@ func (e Value) NotToBe(unExpected interface{}) Value {
 	return e
 }
 
-func (e Value) ToHavePrefix(prefix string) Value {
+// ToHavePrefix asserts that the string value starts with the provided prefix.
+func (e Val) ToHavePrefix(prefix string) Val {
 	actual, is := e.value.(string)
 	if !is {
 		e.t.Fatalf("ToHavePrefix must only be called on a string value")
