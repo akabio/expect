@@ -16,7 +16,7 @@ func TestExample(t *testing.T) {
 
 ### ToBe
 
-ToBe compares the given value against the provided value using deep equal.
+Asserts that the value is deeply equal to the provided value.
 
 ```go
 expect.Value(t, "the house", "big").ToBe("small")
@@ -51,3 +51,11 @@ Asserts that the list/map/chan/string has c elements.
 expect.Value(t, "token", "F7gTr7y").ToCount(8)
 // expected token to have 8 elements but it has 7 elements
 ```
+
+### ToHavePrefix
+
+Asserts that the string begins with the provided string.
+
+### NotToBe
+
+Asserts that the value is not deeply equal to the provided value.

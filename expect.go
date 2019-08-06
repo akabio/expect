@@ -1,7 +1,6 @@
 package expect
 
 import (
-	"encoding/json"
 	"reflect"
 	"strings"
 
@@ -61,12 +60,14 @@ func (e Val) ToCount(c int) Val {
 // NotToBe asserts that the value is not deeply equals to expected value.
 func (e Val) NotToBe(unExpected interface{}) Val {
 	if reflect.DeepEqual(e.value, unExpected) {
-		exp, err := json.MarshalIndent(unExpected, "--", "  ")
-		if err != nil {
-			e.t.Errorf("expected %v to NOT be '%v' but it is", e.name, unExpected)
-		} else {
-			e.t.Errorf("expected %v to NOT be:\n%v\nbut it is", e.name, string(exp))
+		if needsFormating(e.value) {
+			exp, err := yaml.Marshal(unExpected)
+			if err == nil {
+				e.t.Errorf("expected %v to NOT be:\n%v\nbut it is", e.name, string(exp))
+				return e
+			}
 		}
+		e.t.Errorf("expected %v to NOT be '%v' but it is", e.name, unExpected)
 	}
 	return e
 }
