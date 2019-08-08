@@ -32,13 +32,3 @@ func f(i interface{}) (string, string) {
 
 	return fmt.Sprintf("'%v'", i), " "
 }
-
-// if needsFormating(e.value) {
-// 	// if it's a "complex" type we try to print the value as formated yaml
-// 	exp, erre := yaml.Marshal(expected)
-// 	val, errv := yaml.Marshal(e.value)
-// 	if erre == nil && errv == nil {
-// 		e.t.Errorf("expected %v to be:\n%v\nbut it is:\n%v", e.name, string(exp), string(val))
-// 		return e
-// 	}
-// }

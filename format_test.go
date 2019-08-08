@@ -30,3 +30,7 @@ func TestFormat(t *testing.T) {
 func TestFormatSlice(t *testing.T) {
 	runTest(t, []string{"a", "b"}, "  > - a\n  > - b", "\n")
 }
+
+func TestFormatMap(t *testing.T) {
+	runTest(t, map[string]int{"a": 2, "b": 15}, "  > a: 2\n  > b: 15", "\n")
+}
