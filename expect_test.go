@@ -102,3 +102,13 @@ func TestFailNotToBeSlice(t *testing.T) {
 
 but it is`)
 }
+
+func TestToBeAbout(t *testing.T) {
+	expect.Value(t, "liters", 1.92).ToBeAbout(2, 0.1)
+}
+
+func TestFailToBeAbout(t *testing.T) {
+	l := test.New(t)
+	expect.Value(l, "liters", 1.92).ToBeAbout(2, 0.01)
+	l.ExpectMessage(0).ToBe("expected liters to be 2±0.01 but it is 1.92")
+}

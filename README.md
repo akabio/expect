@@ -59,3 +59,7 @@ Asserts that the string begins with the provided string.
 ### NotToBe
 
 Asserts that the value is not deeply equal to the provided value.
+
+### ToBeAbout
+
+Asserts that the number is about expected value with a margib of error of provided delta.
