@@ -3,8 +3,6 @@ package expect
 import (
 	"reflect"
 	"strings"
-
-	"github.com/ghodss/yaml"
 )
 
 // Value wraps a value and provides expectations for this value.
@@ -26,17 +24,9 @@ type Val struct {
 // ToBe asserts that the value is deeply equals to expected value.
 func (e Val) ToBe(expected interface{}) Val {
 	if !reflect.DeepEqual(e.value, expected) {
-		if needsFormating(e.value) {
-			// if it's a "complex" type we try to print the value as formated yaml
-			exp, erre := yaml.Marshal(expected)
-			val, errv := yaml.Marshal(e.value)
-			if erre == nil && errv == nil {
-				e.t.Errorf("expected %v to be:\n%v\nbut it is:\n%v", e.name, string(exp), string(val))
-				return e
-			}
-		}
-		// otherwise or if serialisation failed print it as it is
-		e.t.Errorf("expected %v to be '%v' but it is '%v'", e.name, expected, e.value)
+		x, xp := f(expected)
+		v, vp := f(e.value)
+		e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, xp, x, xp, vp, v)
 	}
 	return e
 }
@@ -59,14 +49,8 @@ func (e Val) ToCount(c int) Val {
 // NotToBe asserts that the value is not deeply equals to expected value.
 func (e Val) NotToBe(unExpected interface{}) Val {
 	if reflect.DeepEqual(e.value, unExpected) {
-		if needsFormating(e.value) {
-			exp, err := yaml.Marshal(unExpected)
-			if err == nil {
-				e.t.Errorf("expected %v to NOT be:\n%v\nbut it is", e.name, string(exp))
-				return e
-			}
-		}
-		e.t.Errorf("expected %v to NOT be '%v' but it is", e.name, unExpected)
+		x, xp := f(unExpected)
+		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, xp, x, xp)
 	}
 	return e
 }
@@ -132,20 +116,6 @@ func hasLen(v interface{}) bool {
 	case reflect.Slice:
 		return true
 	case reflect.String:
-		return true
-	}
-	return false
-}
-
-func needsFormating(v interface{}) bool {
-	switch reflect.TypeOf(v).Kind() {
-	case reflect.Array:
-		return true
-	case reflect.Map:
-		return true
-	case reflect.Slice:
-		return true
-	case reflect.Struct:
 		return true
 	}
 	return false

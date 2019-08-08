@@ -31,20 +31,18 @@ func TestToBeFloat64(t *testing.T) {
 func TestFailToBeFloat64(t *testing.T) {
 	l := test.New(t)
 	expect.Value(l, "liters", 3.45).ToBe(3.45002)
-	l.ExpectMessage(0).ToBe("expected liters to be '3.45002' but it is '3.45'")
+	l.ExpectMessage(0).ToBe("expected liters to be 3.45002 but it is 3.45")
 }
 
 func TestFailToBeMap(t *testing.T) {
 	l := test.New(t)
 	expect.Value(l, "names", map[string]int{"peter": 3, "johan": 2}).ToBe(map[string]int{"peter": 3, "johan": 1})
-	l.ExpectMessage(0).ToBe(`expected names to be:
-johan: 1
-peter: 3
-
-but it is:
-johan: 2
-peter: 3
-`)
+	l.ExpectMessage(0).ToBe(`expected names to be
+  > johan: 1
+  > peter: 3
+but it is
+  > johan: 2
+  > peter: 3`)
 }
 
 func TestToCountString(t *testing.T) {
@@ -89,17 +87,16 @@ func TestNotToBe(t *testing.T) {
 func TestFailNotToBe(t *testing.T) {
 	l := test.New(t)
 	expect.Value(l, "number", 7).NotToBe(7)
-	l.ExpectMessage(0).ToBe("expected number to NOT be '7' but it is")
+	l.ExpectMessage(0).ToBe("expected number to NOT be 7 but it is")
 }
 
 func TestFailNotToBeSlice(t *testing.T) {
 	l := test.New(t)
 	expect.Value(l, "numbers", []int{3, 2, 1}).NotToBe([]int{3, 2, 1})
-	l.ExpectMessage(0).ToBe(`expected numbers to NOT be:
-- 3
-- 2
-- 1
-
+	l.ExpectMessage(0).ToBe(`expected numbers to NOT be
+  > - 3
+  > - 2
+  > - 1
 but it is`)
 }
 
