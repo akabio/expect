@@ -28,19 +28,18 @@ It will print complex data types formated as yaml:
 ```go
 expect.Value(t, "array", []int{3, 1}).ToBe([]int{1, 3})
 // expected array to be:
-// - 1
-// - 3
-//
+//   > - 1
+//   > - 3
 // but it is:
-// - 3
-// - 1
+//   > - 3
+//   > - 1
 ```
 
 It will check for exact numbers:
 
 ```go
 expect.Value(t, "liters", 3.4500000000001).ToBe(3.45)
-// expected liters to be '3.45' but it is '3.4500000000001'
+// expected liters to be 3.45 but it is 3.4500000000001
 ```
 
 ### ToCount
