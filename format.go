@@ -9,6 +9,9 @@ import (
 )
 
 func f(i interface{}) (string, string) {
+    if i == nil {
+        return "nil", " "
+    }
 	switch i.(type) {
 	case int, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float32, float64:
 		return fmt.Sprintf("%v", i), " "
