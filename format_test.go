@@ -34,3 +34,16 @@ func TestFormatSlice(t *testing.T) {
 func TestFormatMap(t *testing.T) {
 	runTest(t, map[string]int{"a": 2, "b": 15}, "  > a: 2\n  > b: 15", "\n")
 }
+
+type Struct struct {
+	Foo   string
+	Count int
+}
+
+func TestFormatStruct(t *testing.T) {
+	runTest(t, Struct{Foo: "Bar"}, "  > Count: 0\n  > Foo: Bar", "\n")
+}
+
+func TestFormatStructPtr(t *testing.T) {
+	runTest(t, &Struct{Foo: "Bar"}, "  > Count: 0\n  > Foo: Bar", "\n")
+}

@@ -9,15 +9,21 @@ import (
 )
 
 func f(i interface{}) (string, string) {
-    if i == nil {
-        return "nil", " "
-    }
+	if i == nil {
+		return "nil", " "
+	}
 	switch i.(type) {
 	case int, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float32, float64:
 		return fmt.Sprintf("%v", i), " "
 	}
 
-	switch reflect.TypeOf(i).Kind() {
+	kind := reflect.TypeOf(i).Kind()
+
+	switch kind {
+	case reflect.Ptr:
+		// de-reference ptr and call formater again
+		return f(reflect.ValueOf(i).Elem().Interface())
+
 	case reflect.Array, reflect.Map, reflect.Slice, reflect.Struct:
 		y, err := yaml.Marshal(i)
 		if y[len(y)-1] == '\n' {
