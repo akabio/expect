@@ -10,7 +10,7 @@ var cases = map[interface{}][]string{
 	7:       {"7", " "},
 	uint(7): {"7", " "},
 	12.1:    {"12.1", " "},
-	// &[]string{"a", "b"}: []string{"", ""},
+	// &[]string{"a", "b"}: []string{"", ""}, // TODO: slice is unhashable type
 }
 
 func runTest(t *testing.T, i interface{}, x, xp string) {

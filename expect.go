@@ -3,7 +3,16 @@ package expect
 import (
 	"reflect"
 	"strings"
+
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
+
+type output string
+
+var PlainOutput = output("plain")
+var ColoredDiffOutput = output("coloredDiffOutput")
+
+var Output = PlainOutput
 
 // Value wraps a value and provides expectations for this value.
 func Value(t Test, name string, val interface{}) Val {
@@ -26,7 +35,14 @@ func (e Val) ToBe(expected interface{}) Val {
 	if !reflect.DeepEqual(e.value, expected) {
 		x, xp := f(expected)
 		v, vp := f(e.value)
-		e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, xp, x, xp, vp, v)
+		if Output == ColoredDiffOutput && xp == "\n" && vp == "\n" {
+			dmp := diffmatchpatch.New()
+			diffs := dmp.DiffMainRunes([]rune(x), []rune(v), false)
+			dmp.DiffCleanupSemantic(diffs)
+			e.t.Error(dmp.DiffPrettyText(diffs))
+		} else {
+			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, xp, x, xp, vp, v)
+		}
 	}
 	return e
 }

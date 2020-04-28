@@ -10,8 +10,8 @@ import (
 // Logger implements Test and allows for inspection of the
 // calls.
 type Logger struct {
-	Fatal    []string
-	Error    []string
+	Fatals   []string
+	Errors   []string
 	Messages []string
 	t        *testing.T
 }
@@ -23,14 +23,21 @@ func New(t *testing.T) *Logger {
 // Fatalf records call
 func (l *Logger) Fatalf(f string, i ...interface{}) {
 	line := fmt.Sprintf(f, i...)
-	l.Fatal = append(l.Fatal, line)
+	l.Fatals = append(l.Fatals, line)
 	l.Messages = append(l.Messages, line)
 }
 
 // Errorf records call
 func (l *Logger) Errorf(f string, i ...interface{}) {
 	line := fmt.Sprintf(f, i...)
-	l.Error = append(l.Error, line)
+	l.Errors = append(l.Errors, line)
+	l.Messages = append(l.Messages, line)
+}
+
+// Error records call
+func (l *Logger) Error(p ...interface{}) {
+	line := fmt.Sprint(p...)
+	l.Errors = append(l.Errors, line)
 	l.Messages = append(l.Messages, line)
 }
 

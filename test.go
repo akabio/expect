@@ -5,4 +5,5 @@ package expect
 type Test interface {
 	Fatalf(f string, i ...interface{})
 	Errorf(f string, i ...interface{})
+	Error(p ...interface{})
 }
