@@ -35,7 +35,7 @@ func (e Val) ToBe(expected interface{}) Val {
 	if !reflect.DeepEqual(e.value, expected) {
 		x, xp := f(expected)
 		v, vp := f(e.value)
-		if Output == ColoredDiffOutput && xp == "\n" && vp == "\n" {
+		if Output == ColoredDiffOutput && (len(x) > 30 || len(v) > 30) {
 			dmp := diffmatchpatch.New()
 			diffs := dmp.DiffMainRunes([]rune(x), []rune(v), false)
 			dmp.DiffCleanupSemantic(diffs)
