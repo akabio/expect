@@ -1,7 +1,9 @@
 package expect
 
-// Test implements gos testing.T methods used by expect.
-// Used to also allow testing.B instances, as well as testing of expect.
+// Test implements testing.T methods used by expect.
+// Necessary to:
+// - allow usage of testing.T and testing.B instances
+// - for running tests
 type Test interface {
 	Fatalf(f string, i ...interface{})
 	Errorf(f string, i ...interface{})

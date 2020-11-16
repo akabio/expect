@@ -80,6 +80,22 @@ func TestErrorToHavePrefixOnInt(t *testing.T) {
 	l.ExpectMessage(0).ToBe("ToHavePrefix must only be called on a string value")
 }
 
+func TestToHaveSuffix(t *testing.T) {
+	expect.Value(t, "statement", "we are all crazy").ToHaveSuffix("all crazy")
+}
+
+func TestFailToHaveSufix(t *testing.T) {
+	l := test.New(t)
+	expect.Value(l, "statement", "we are all crazy").ToHaveSuffix("all nuts")
+	l.ExpectMessage(0).ToBe("expected statement to have suffix 'all nuts' but it is 'we are all crazy'")
+}
+
+func TestErrorToHaveSufixOnInt(t *testing.T) {
+	l := test.New(t)
+	expect.Value(l, "number", 7).ToHaveSuffix("i am")
+	l.ExpectMessage(0).ToBe("ToHaveSuffix must only be called on a string value")
+}
+
 func TestNotToBe(t *testing.T) {
 	expect.Value(t, "number", 7).NotToBe(8)
 }

@@ -121,6 +121,18 @@ func (e Val) ToHavePrefix(prefix string) Val {
 	return e
 }
 
+// ToHaveSuffix asserts that the string value ends with the provided sufix.
+func (e Val) ToHaveSuffix(suffix string) Val {
+	actual, is := e.value.(string)
+	if !is {
+		e.t.Fatalf("ToHaveSuffix must only be called on a string value")
+	}
+	if !strings.HasSuffix(actual, suffix) {
+		e.t.Errorf("expected %v to have suffix '%v' but it is '%v'", e.name, suffix, actual)
+	}
+	return e
+}
+
 func hasLen(v interface{}) bool {
 	switch reflect.TypeOf(v).Kind() {
 	case reflect.Array:
