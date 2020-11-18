@@ -12,11 +12,24 @@ type output string
 var PlainOutput = output("plain")
 var ColoredDiffOutput = output("coloredDiffOutput")
 
-var Output = PlainOutput
+type Expect struct {
+	Output output
+}
+
+var Default = &Expect{
+	Output: PlainOutput,
+}
 
 // Value wraps a value and provides expectations for this value.
+// It delegates to the default instance `Default`.
 func Value(t Test, name string, val interface{}) Val {
+	return Default.Value(t, name, val)
+}
+
+// Value wraps a value and provides expectations for this value.
+func (e *Expect) Value(t Test, name string, val interface{}) Val {
 	return Val{
+		ex:    e,
 		name:  name,
 		t:     t,
 		value: val,
@@ -25,6 +38,7 @@ func Value(t Test, name string, val interface{}) Val {
 
 // Val to call expectations on.
 type Val struct {
+	ex    *Expect
 	name  string
 	t     Test
 	value interface{}
@@ -33,15 +47,15 @@ type Val struct {
 // ToBe asserts that the value is deeply equals to expected value.
 func (e Val) ToBe(expected interface{}) Val {
 	if !reflect.DeepEqual(e.value, expected) {
-		x, xp := f(expected)
-		v, vp := f(e.value)
-		if Output == ColoredDiffOutput && (len(x) > 30 || len(v) > 30) {
+		x, delimiterX := format(expected)
+		v, delimiterV := format(e.value)
+		if e.ex.Output == ColoredDiffOutput && (len(x) > 30 || len(v) > 30) {
 			dmp := diffmatchpatch.New()
 			diffs := dmp.DiffMainRunes([]rune(x), []rune(v), false)
 			dmp.DiffCleanupSemantic(diffs)
 			e.t.Error(dmp.DiffPrettyText(diffs))
 		} else {
-			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, xp, x, xp, vp, v)
+			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, delimiterX, x, delimiterX, delimiterV, v)
 		}
 	}
 	return e
@@ -65,8 +79,8 @@ func (e Val) ToCount(c int) Val {
 // NotToBe asserts that the value is not deeply equals to expected value.
 func (e Val) NotToBe(unExpected interface{}) Val {
 	if reflect.DeepEqual(e.value, unExpected) {
-		x, xp := f(unExpected)
-		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, xp, x, xp)
+		x, delimiter := format(unExpected)
+		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, delimiter, x, delimiter)
 	}
 	return e
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"gitlab.com/testle/expect"
+	"gitlab.com/akabio/expect"
 )
 
 // Logger implements Test and allows for inspection of the

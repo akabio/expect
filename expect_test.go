@@ -3,8 +3,8 @@ package expect_test
 import (
 	"testing"
 
-	"gitlab.com/testle/expect"
-	"gitlab.com/testle/expect/internal/test"
+	"gitlab.com/akabio/expect"
+	"gitlab.com/akabio/expect/internal/test"
 )
 
 func TestExample(t *testing.T) {

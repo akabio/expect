@@ -8,7 +8,7 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-func f(i interface{}) (string, string) {
+func format(i interface{}) (string, string) {
 	if i == nil {
 		return "nil", " "
 	}
@@ -22,7 +22,7 @@ func f(i interface{}) (string, string) {
 	switch kind {
 	case reflect.Ptr:
 		// de-reference ptr and call formater again
-		return f(reflect.ValueOf(i).Elem().Interface())
+		return format(reflect.ValueOf(i).Elem().Interface())
 
 	case reflect.Array, reflect.Map, reflect.Slice, reflect.Struct:
 		y, err := yaml.Marshal(i)

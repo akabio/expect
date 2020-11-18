@@ -51,9 +51,9 @@ expect.Value(t, "token", "F7gTr7y").ToCount(8)
 // expected token to have 8 elements but it has 7 elements
 ```
 
-### ToHavePrefix
+### ToHavePrefix/Suffix
 
-Asserts that the string begins with the provided string.
+Asserts that the string begins with the provided string or ends with it.
 
 ### NotToBe
 
@@ -61,4 +61,4 @@ Asserts that the value is not deeply equal to the provided value.
 
 ### ToBeAbout
 
-Asserts that the number is about expected value with a margib of error of provided delta.
+Asserts that the number is about expected value with a margin of error of provided delta.

@@ -1,4 +1,4 @@
-module gitlab.com/testle/expect
+module gitlab.com/akabio/expect
 
 go 1.12
 
