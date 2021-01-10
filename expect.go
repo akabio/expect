@@ -26,11 +26,28 @@ func Value(t Test, name string, val interface{}) Val {
 	return Default.Value(t, name, val)
 }
 
+// Error wraps an error and provides expectations for this value.
+// It delegates to the default instance `Default`.
+func Error(t Test, val interface{}) Val {
+	return Default.Error(t, val)
+}
+
 // Value wraps a value and provides expectations for this value.
 func (e *Expect) Value(t Test, name string, val interface{}) Val {
 	return Val{
 		ex:    e,
 		name:  name,
+		t:     t,
+		value: val,
+	}
+}
+
+// Error wraps an error and provides expectations for this value.
+// This is a shortcut for value using "error" as name.
+func (e *Expect) Error(t Test, val interface{}) Val {
+	return Val{
+		ex:    e,
+		name:  "error",
 		t:     t,
 		value: val,
 	}
@@ -147,6 +164,30 @@ func (e Val) ToHaveSuffix(suffix string) Val {
 	return e
 }
 
+// Message creates a new value from the given errors message. If the error is nil the message
+// wil be the empty string.
+func (e Val) Message() Val {
+	if e.value == nil {
+		// nil always translates to empty string
+		return Val{
+			ex:    e.ex,
+			name:  e.name + " message",
+			t:     e.t,
+			value: "",
+		}
+	}
+
+	actual, is := e.value.(error)
+	if !is {
+		e.t.Fatalf("Message must only be called on a error value")
+	}
+	return Val{
+		ex:    e.ex,
+		name:  e.name + " message",
+		t:     e.t,
+		value: actual.Error(),
+	}
+}
 func hasLen(v interface{}) bool {
 	switch reflect.TypeOf(v).Kind() {
 	case reflect.Array:

@@ -16,8 +16,15 @@ type Logger struct {
 	t        *testing.T
 }
 
-func New(t *testing.T) *Logger {
-	return &Logger{t: t}
+func New(t *testing.T, f func(t expect.Test)) (logger *Logger) {
+	logger = &Logger{t: t}
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("recovered panic", r)
+		}
+	}()
+	f(logger)
+	return logger
 }
 
 // Fatalf records call
@@ -25,6 +32,7 @@ func (l *Logger) Fatalf(f string, i ...interface{}) {
 	line := fmt.Sprintf(f, i...)
 	l.Fatals = append(l.Fatals, line)
 	l.Messages = append(l.Messages, line)
+	panic("fatal")
 }
 
 // Errorf records call
