@@ -49,10 +49,10 @@ func (e Val) ToBe(expected interface{}) Val {
 	if !reflect.DeepEqual(e.value, expected) {
 		x, delimiterX := format(expected)
 		v, delimiterV := format(e.value)
-		if e.ex.Output == ColoredDiffOutput && (len(x) > 30 || len(v) > 30) {
+		if e.ex.Output == ColoredDiffOutput && (len(x) > 20 || len(v) > 20) {
 			dmp := diffmatchpatch.New()
-			diffs := dmp.DiffMainRunes([]rune(x), []rune(v), false)
-			dmp.DiffCleanupSemantic(diffs)
+			diffs := dmp.DiffMainRunes([]rune(v), []rune(x), false)
+			diffs = dmp.DiffCleanupSemantic(diffs)
 			e.t.Error(dmp.DiffPrettyText(diffs))
 		} else {
 			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, delimiterX, x, delimiterX, delimiterV, v)
