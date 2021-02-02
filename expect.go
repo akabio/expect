@@ -70,7 +70,10 @@ func (e Val) ToBe(expected interface{}) Val {
 			dmp := diffmatchpatch.New()
 			diffs := dmp.DiffMainRunes([]rune(v), []rune(x), false)
 			diffs = dmp.DiffCleanupSemantic(diffs)
-			e.t.Error(dmp.DiffPrettyText(diffs))
+			txt := dmp.DiffPrettyText(diffs)
+			txt = strings.ReplaceAll(txt, " ", "․")
+			txt = strings.ReplaceAll(txt, "\t", "→")
+			e.t.Error(txt)
 		} else {
 			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, delimiterX, x, delimiterX, delimiterV, v)
 		}
