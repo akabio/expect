@@ -155,3 +155,13 @@ func TestIntToNotAllowMessageMethod(t *testing.T) {
 	})
 	l.ExpectMessage(0).ToBe("Message must only be called on a error value")
 }
+
+func TestExpectFirstInSlice(t *testing.T) {
+	expect.Value(t, "int slice", []int{1, 2, 3}).First().ToBe(1)
+}
+func TestExpectFirstInString(t *testing.T) {
+	expect.Value(t, "string", "Alabama").First().ToBe(byte(65))
+}
+func TestExpectLastInSlice(t *testing.T) {
+	expect.Value(t, "int slice", []int{1, 2, 3}).Last().ToBe(3)
+}

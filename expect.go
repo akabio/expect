@@ -2,6 +2,7 @@ package expect
 
 import (
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/sergi/go-diff/diffmatchpatch"
@@ -191,6 +192,51 @@ func (e Val) Message() Val {
 		value: actual.Error(),
 	}
 }
+
+func (e Val) index(i int) Val {
+	if !isIndexable(e.value) {
+		e.t.Fatalf("%v is not a indexable datatype (array, slice, string)", e.name)
+		return e
+	}
+
+	l := reflect.ValueOf(e.value).Len()
+	if i < 0 {
+		i = l + i
+	}
+	if i >= l || i < 0 {
+		e.t.Fatalf("%v has length of %, index %v is out of bonds", e.name, l, i)
+	}
+
+	v := reflect.ValueOf(e.value).Index(i)
+
+	return Val{
+		ex:    e.ex,
+		name:  "element at index " + strconv.Itoa(i) + " of " + e.name,
+		t:     e.t,
+		value: v.Interface(),
+	}
+}
+
+func (e Val) First() Val {
+	return e.index(0)
+}
+
+func (e Val) Last() Val {
+	return e.index(-1)
+}
+
+func isIndexable(v interface{}) bool {
+	switch reflect.TypeOf(v).Kind() {
+	case reflect.Array:
+		return true
+	case reflect.Slice:
+		return true
+	case reflect.String:
+		return true
+	}
+	return false
+}
+
 func hasLen(v interface{}) bool {
 	switch reflect.TypeOf(v).Kind() {
 	case reflect.Array:
