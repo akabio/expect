@@ -16,6 +16,8 @@ func TestFormatPrimitives(t *testing.T) {
 	runTest(t, 7, "7", " ")
 	runTest(t, uint(7), "7", " ")
 	runTest(t, 12.1, "12.1", " ")
+	runTest(t, true, "true", " ")
+	runTest(t, nil, "nil", " ")
 }
 
 func TestFormatSlice(t *testing.T) {
@@ -37,4 +39,15 @@ func TestFormatStruct(t *testing.T) {
 
 func TestFormatStructPtr(t *testing.T) {
 	runTest(t, &Struct{Foo: "Bar"}, "  > Count: 0\n  > Foo: Bar", "\n")
+}
+
+type unm struct {
+	F func()
+	X string
+}
+
+func TestFormatUnmarshalable(t *testing.T) {
+	// a struct wit a public func field can not me marsheled into yaml
+	// so we print the normal string representation instead
+	runTest(t, &unm{X: "Foo"}, "{<nil> Foo}", " ")
 }
