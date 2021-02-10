@@ -74,8 +74,8 @@ func (e Val) ToBe(expected interface{}) Val {
 			txt := dmp.DiffPrettyText(diffs)
 			txt = strings.ReplaceAll(txt, " ", "․")
 			txt = strings.ReplaceAll(txt, "\t", "↦")
-			txt = strings.ReplaceAll(txt, "\n", "↵")
-			txt = strings.ReplaceAll(txt, "\r", "↵")
+			txt = strings.ReplaceAll(txt, "\n", "↵\n")
+			txt = strings.ReplaceAll(txt, "\r", "↵\n")
 			e.t.Error(txt)
 		} else {
 			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, delimiterX, x, delimiterX, delimiterV, v)

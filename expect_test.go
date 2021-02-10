@@ -173,5 +173,5 @@ func TestColoredOutputSpaceChars(t *testing.T) {
 		expect.Value(t, "spaces", " 	\n----------------------").ToBe("----------------------")
 		expect.Default.Output = o
 	})
-	l.ExpectMessage(0).ToBe("'[31m․↦↵[0m----------------------'")
+	l.ExpectMessage(0).ToBe("'[31m․↦↵\n[0m----------------------'")
 }
