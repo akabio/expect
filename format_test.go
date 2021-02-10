@@ -21,11 +21,11 @@ func TestFormatPrimitives(t *testing.T) {
 }
 
 func TestFormatSlice(t *testing.T) {
-	runTest(t, []string{"a", "b"}, "  > - a\n  > - b", "\n")
+	runTest(t, []string{"a", "b"}, "- a\n- b", "\n")
 }
 
 func TestFormatMap(t *testing.T) {
-	runTest(t, map[string]int{"a": 2, "b": 15}, "  > a: 2\n  > b: 15", "\n")
+	runTest(t, map[string]int{"a": 2, "b": 15}, "a: 2\nb: 15", "\n")
 }
 
 type Struct struct {
@@ -34,11 +34,11 @@ type Struct struct {
 }
 
 func TestFormatStruct(t *testing.T) {
-	runTest(t, Struct{Foo: "Bar"}, "  > Count: 0\n  > Foo: Bar", "\n")
+	runTest(t, Struct{Foo: "Bar"}, "Count: 0\nFoo: Bar", "\n")
 }
 
 func TestFormatStructPtr(t *testing.T) {
-	runTest(t, &Struct{Foo: "Bar"}, "  > Count: 0\n  > Foo: Bar", "\n")
+	runTest(t, &Struct{Foo: "Bar"}, "Count: 0\nFoo: Bar", "\n")
 }
 
 type unm struct {

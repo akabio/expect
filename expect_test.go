@@ -43,11 +43,11 @@ func TestFailToBeMap(t *testing.T) {
 		expect.Value(t, "names", map[string]int{"peter": 3, "johan": 2}).ToBe(map[string]int{"peter": 3, "johan": 1})
 	})
 	l.ExpectMessage(0).ToBe(`expected names to be
-  > johan: 1
-  > peter: 3
+johan: 1
+peter: 3
 but it is
-  > johan: 2
-  > peter: 3`)
+johan: 2
+peter: 3`)
 }
 
 func TestToCountString(t *testing.T) {
@@ -123,9 +123,9 @@ func TestFailNotToBeSlice(t *testing.T) {
 		expect.Value(t, "numbers", []int{3, 2, 1}).NotToBe([]int{3, 2, 1})
 	})
 	l.ExpectMessage(0).ToBe(`expected numbers to NOT be
-  > - 3
-  > - 2
-  > - 1
+- 3
+- 2
+- 1
 but it is`)
 }
 
@@ -164,4 +164,14 @@ func TestExpectFirstInString(t *testing.T) {
 }
 func TestExpectLastInSlice(t *testing.T) {
 	expect.Value(t, "int slice", []int{1, 2, 3}).Last().ToBe(3)
+}
+
+func TestColoredOutputSpaceChars(t *testing.T) {
+	l := test.New(t, func(t expect.Test) {
+		o := expect.Default.Output
+		expect.Default.Output = expect.ColoredDiffOutput
+		expect.Value(t, "spaces", " 	\n----------------------").ToBe("----------------------")
+		expect.Default.Output = o
+	})
+	l.ExpectMessage(0).ToBe("'[31m․↦↵[0m----------------------'")
 }

@@ -17,11 +17,11 @@ func TestReadmeToToBeArray(t *testing.T) {
 	l := &test.Logger{}
 	expect.Value(l, "array", []int{3, 1}).ToBe([]int{1, 3})
 	expect.Value(t, "error", l.Messages[0]).ToBe(`expected array to be
-  > - 1
-  > - 3
+- 1
+- 3
 but it is
-  > - 3
-  > - 1`)
+- 3
+- 1`)
 }
 
 func TestReadmeToBeFloat64(t *testing.T) {

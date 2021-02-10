@@ -3,7 +3,6 @@ package expect
 import (
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/ghodss/yaml"
 )
@@ -32,11 +31,7 @@ func format(i interface{}) (string, string) {
 			if len(y) > 0 && y[len(y)-1] == '\n' {
 				y = y[:len(y)-1]
 			}
-			lines := []string{}
-			for _, line := range strings.Split(string(y), "\n") {
-				lines = append(lines, "  > "+line)
-			}
-			return strings.Join(lines, "\n"), "\n"
+			return string(y), "\n"
 		}
 	}
 
