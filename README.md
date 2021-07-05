@@ -23,6 +23,13 @@ expect.Value(t, "the house", "big").ToBe("small")
 // expected the house to be 'small' but it is 'big'
 ```
 
+#### checking time.Time
+When comparing times it can happen that two time instances with the exact same date/time can be different. This happens when one of them has location set to nil and the other to UTC. Although the documntation states that nil must be used instead of UTC some 3th party libs manage to return such instances.
+
+### checking error
+For error comparison the Error strings are returned. This can lead to messages like `expected Error to be 'foo' but it is 'foo'`.
+
+### checking structs, slices, maps
 It will print complex data types formated as yaml:
 
 ```go

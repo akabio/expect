@@ -27,6 +27,21 @@ func TestToFailToBeString(t *testing.T) {
 	l.ExpectMessage(0).ToBe("expected foo to be 'yyy' but it is 'xxx'")
 }
 
+func TestToFailToBeMultilineString(t *testing.T) {
+	l := test.New(t, func(t expect.Test) {
+		expect.Value(t, "foo", "A\nB\nC").ToBe("a\nb\nc")
+	})
+	l.ExpectMessages().ToCount(1)
+	l.ExpectMessage(0).ToBe(`expected foo to be
+a
+b
+c
+but it is
+A
+B
+C`)
+}
+
 func TestToBeFloat64(t *testing.T) {
 	expect.Value(t, "liters", 3.45).ToBe(3.45)
 }
@@ -173,5 +188,5 @@ func TestColoredOutputSpaceChars(t *testing.T) {
 		expect.Value(t, "spaces", " 	\n----------------------").ToBe("----------------------")
 		expect.Default.Output = o
 	})
-	l.ExpectMessage(0).ToBe("'[31m․↦↵\n[0m----------------------'")
+	l.ExpectMessage(0).ToBe("[31m․↦↵\n[0m----------------------")
 }

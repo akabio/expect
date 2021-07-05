@@ -65,8 +65,7 @@ type Val struct {
 // ToBe asserts that the value is deeply equals to expected value.
 func (e Val) ToBe(expected interface{}) Val {
 	if !reflect.DeepEqual(e.value, expected) {
-		x, delimiterX := format(expected)
-		v, delimiterV := format(e.value)
+		x, v, del := formatBoth(expected, e.value)
 		if e.ex.Output == ColoredDiffOutput && (len(x) > 20 || len(v) > 20) {
 			dmp := diffmatchpatch.New()
 			diffs := dmp.DiffMainRunes([]rune(v), []rune(x), false)
@@ -78,7 +77,8 @@ func (e Val) ToBe(expected interface{}) Val {
 			txt = strings.ReplaceAll(txt, "\r", "↵\n")
 			e.t.Error(txt)
 		} else {
-			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, delimiterX, x, delimiterX, delimiterV, v)
+			pres := presentations[del]
+			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, pres, x, pres, pres, v)
 		}
 	}
 	return e
@@ -102,8 +102,10 @@ func (e Val) ToCount(c int) Val {
 // NotToBe asserts that the value is not deeply equals to expected value.
 func (e Val) NotToBe(unExpected interface{}) Val {
 	if reflect.DeepEqual(e.value, unExpected) {
-		x, delimiter := format(unExpected)
-		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, delimiter, x, delimiter)
+		x, p, d := format(unExpected)
+
+		nl := presentations[p]
+		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, nl, del(x, d), nl)
 	}
 	return e
 }
@@ -206,7 +208,7 @@ func (e Val) index(i int) Val {
 		i = l + i
 	}
 	if i >= l || i < 0 {
-		e.t.Fatalf("%v has length of %, index %v is out of bonds", e.name, l, i)
+		e.t.Fatalf("%v has length of %, index %v is out of bounds", e.name, l, i)
 	}
 
 	v := reflect.ValueOf(e.value).Index(i)

@@ -1,13 +1,24 @@
 package expect
 
 import (
+	"errors"
 	"fmt"
 	"testing"
+	"time"
 )
 
+var gmtM1 = func() *time.Location {
+	l, err := time.LoadLocation("Etc/GMT-1")
+	if err != nil {
+		panic(err)
+	}
+	return l
+}()
+
 func runTest(t *testing.T, i interface{}, x, xp string) {
-	actual, aPad := format(i)
-	Value(t, fmt.Sprintf("f(%v %T)", i, i), actual).ToBe(x)
+	actual, p, d := format(i)
+	aPad := presentations[p]
+	Value(t, fmt.Sprintf("f(%v %T)", i, i), del(actual, d)).ToBe(x)
 	Value(t, fmt.Sprintf("f(%v %T) pad", i, i), aPad).ToBe(xp)
 }
 
@@ -18,6 +29,9 @@ func TestFormatPrimitives(t *testing.T) {
 	runTest(t, 12.1, "12.1", " ")
 	runTest(t, true, "true", " ")
 	runTest(t, nil, "nil", " ")
+	runTest(t, time.Date(2020, 3, 4, 8, 32, 34, 0, time.UTC), "2020-03-04T08:32:34Z", " ")
+	runTest(t, time.Date(2020, 3, 4, 8, 32, 34, 0, gmtM1), "2020-03-04T08:32:34+01:00", " ")
+	runTest(t, errors.New("xyz"), "'xyz'", " ")
 }
 
 func TestFormatSlice(t *testing.T) {
