@@ -60,6 +60,20 @@ func TestFailToBeFloat32Type(t *testing.T) {
 	l.ExpectMessage(0).ToBe("expected liters to be of type float32 but it is of type float64")
 }
 
+func TestFailTypeCheckMap(t *testing.T) {
+	l := test.New(t, func(t expect.Test) {
+		expect.Value(t, "inventory", map[string][]string{}).ToBe([]int{})
+	})
+	l.ExpectMessage(0).ToBe("expected inventory to be of type []int but it is of type map[string][]string")
+}
+
+func TestFailTypeCheckNonPointer(t *testing.T) {
+	l := test.New(t, func(t expect.Test) {
+		expect.Value(t, "ref", &[]int{}).ToBe([]int{})
+	})
+	l.ExpectMessage(0).ToBe("expected ref to be of type []int but it is of type *[]int")
+}
+
 func TestFailToBeMap(t *testing.T) {
 	l := test.New(t, func(t expect.Test) {
 		expect.Value(t, "names", map[string]int{"peter": 3, "johan": 2}).ToBe(map[string]int{"peter": 3, "johan": 1})
