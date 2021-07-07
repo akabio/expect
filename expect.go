@@ -64,6 +64,11 @@ type Val struct {
 
 // ToBe asserts that the value is deeply equals to expected value.
 func (e Val) ToBe(expected interface{}) Val {
+	if !sameType(e.value, expected) {
+		e.t.Errorf("expected %v to be of type %v but it is of type %v", e.name, typeName(expected), typeName(e.value))
+		return e
+	}
+
 	if !reflect.DeepEqual(e.value, expected) {
 		x, v, del := formatBoth(expected, e.value)
 		if e.ex.Output == ColoredDiffOutput && (len(x) > 20 || len(v) > 20) {
@@ -78,7 +83,7 @@ func (e Val) ToBe(expected interface{}) Val {
 			e.t.Error(txt)
 		} else {
 			pres := presentations[del]
-			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, pres, x, pres, pres, v)
+			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, pres, indent(x, del), pres, pres, indent(v, del))
 		}
 	}
 	return e
@@ -102,10 +107,9 @@ func (e Val) ToCount(c int) Val {
 // NotToBe asserts that the value is not deeply equals to expected value.
 func (e Val) NotToBe(unExpected interface{}) Val {
 	if reflect.DeepEqual(e.value, unExpected) {
-		x, p, d := format(unExpected)
-
+		x, p := formatOne(unExpected)
 		nl := presentations[p]
-		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, nl, del(x, d), nl)
+		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, nl, x, nl)
 	}
 	return e
 }

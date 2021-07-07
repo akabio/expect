@@ -33,13 +33,13 @@ func TestToFailToBeMultilineString(t *testing.T) {
 	})
 	l.ExpectMessages().ToCount(1)
 	l.ExpectMessage(0).ToBe(`expected foo to be
-a
-b
-c
+    a
+    b
+    c
 but it is
-A
-B
-C`)
+    A
+    B
+    C`)
 }
 
 func TestToBeFloat64(t *testing.T) {
@@ -53,16 +53,23 @@ func TestFailToBeFloat64(t *testing.T) {
 	l.ExpectMessage(0).ToBe("expected liters to be 3.45002 but it is 3.45")
 }
 
+func TestFailToBeFloat32Type(t *testing.T) {
+	l := test.New(t, func(t expect.Test) {
+		expect.Value(t, "liters", 3.45).ToBe(float32(3.45))
+	})
+	l.ExpectMessage(0).ToBe("expected liters to be of type float32 but it is of type float64")
+}
+
 func TestFailToBeMap(t *testing.T) {
 	l := test.New(t, func(t expect.Test) {
 		expect.Value(t, "names", map[string]int{"peter": 3, "johan": 2}).ToBe(map[string]int{"peter": 3, "johan": 1})
 	})
 	l.ExpectMessage(0).ToBe(`expected names to be
-johan: 1
-peter: 3
+    johan: 1
+    peter: 3
 but it is
-johan: 2
-peter: 3`)
+    johan: 2
+    peter: 3`)
 }
 
 func TestToCountString(t *testing.T) {

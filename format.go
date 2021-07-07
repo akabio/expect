@@ -66,11 +66,36 @@ func formatBoth(x interface{}, v interface{}) (string, string, presentation) {
 	if vd == block || xd == block {
 		return xf, vf, block
 	}
+
 	if strings.Contains(xf, "\n") || strings.Contains(vf, "\n") {
 		return xf, vf, block
 	}
 
 	return del(xf, dx), del(vf, dv), compact
+}
+
+func formatOne(x interface{}) (string, presentation) {
+	xf, xd, dx := format(x)
+	if xd == block {
+		return xf, block
+	}
+
+	if strings.Contains(xf, "\n") {
+		return xf, block
+	}
+
+	return del(xf, dx), compact
+}
+
+func indent(v string, pres presentation) string {
+	if pres == block {
+		lines := strings.Split(v, "\n")
+		for i := range lines {
+			lines[i] = "    " + lines[i]
+		}
+		return strings.Join(lines, "\n")
+	}
+	return v
 }
 
 func del(v string, d bool) string {
