@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"gitlab.com/akabio/expect"
@@ -60,4 +61,18 @@ func (l *Logger) ExpectMessage(i int) expect.Val {
 		l.t.Errorf("there is not message at index %v", i)
 	}
 	return expect.Value(l.t, "message", l.Messages[i])
+}
+
+// ExpectMessageNoLoc returns the message at given index ommitting the first line with location
+func (l *Logger) ExpectMessageNoLoc(i int) expect.Val {
+	if len(l.Messages) <= i {
+		l.t.Errorf("there is not message at index %v", i)
+	}
+	msg := l.Messages[i]
+	nlIndex := strings.Index(msg, "\n")
+	if nlIndex != -1 {
+		msg = msg[nlIndex+1:]
+	}
+
+	return expect.Value(l.t, "message", msg)
 }

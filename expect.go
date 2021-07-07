@@ -38,20 +38,15 @@ func (e *Expect) Value(t Test, name string, val interface{}) Val {
 	return Val{
 		ex:    e,
 		name:  name,
-		t:     t,
+		t:     &locationDeco{t: t},
 		value: val,
 	}
 }
 
 // Error wraps an error and provides expectations for this value.
-// This is a shortcut for value using "error" as name.
+// This is a shortcut for Value(t, "error", val).
 func (e *Expect) Error(t Test, val interface{}) Val {
-	return Val{
-		ex:    e,
-		name:  "error",
-		t:     t,
-		value: val,
-	}
+	return Value(t, "error", val)
 }
 
 // Val to call expectations on.
