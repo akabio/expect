@@ -26,10 +26,18 @@ expect.Value(t, "the house", "big").ToBe("small")
 #### checking time.Time
 When comparing times it can happen that two time instances with the exact same date/time can be different. This happens when one of them has location set to nil and the other to UTC. Although the documntation states that nil must be used instead of UTC some 3th party libs manage to return such instances.
 
-### checking error
+#### checking nil
+
+A check for nil will always be ok if the value is nil or a interface that points to a nil value.
+This allows that following works:
+
+    var a = *AType
+    expect.Value(t, "a nil", a).ToBe(nil)
+
+#### checking error
 For error comparison the Error strings are returned. This can lead to messages like `expected Error to be 'foo' but it is 'foo'`.
 
-### checking structs, slices, maps
+#### checking structs, slices, maps
 It will print complex data types formated as yaml:
 
 ```go

@@ -64,6 +64,11 @@ func (e Val) ToBe(expected interface{}) Val {
 		return e
 	}
 
+	// if both are some kind of nil we are fine
+	if isNil(e.value) && isNil(expected) {
+		return e
+	}
+
 	if !reflect.DeepEqual(e.value, expected) {
 		x, v, del := formatBoth(expected, e.value)
 		if e.ex.Output == ColoredDiffOutput && (len(x) > 20 || len(v) > 20) {

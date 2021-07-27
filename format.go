@@ -44,6 +44,11 @@ func format(i interface{}) (string, presentation, bool) {
 	switch kind {
 	case reflect.Ptr:
 		// de-reference ptr and call formater again
+
+		if isNil(i) {
+			return "<nil>", compact, false
+		}
+
 		return format(reflect.ValueOf(i).Elem().Interface())
 
 	case reflect.Array, reflect.Map, reflect.Slice, reflect.Struct:

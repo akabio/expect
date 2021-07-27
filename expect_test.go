@@ -86,6 +86,16 @@ but it is
     peter: 3`)
 }
 
+func TestNilTypeToBeNil(t *testing.T) {
+	type vs struct{}
+	var vsv *vs
+	expect.Value(t, "vsv", vsv).ToBe(nil)
+}
+
+func TestNilValueToBeNil(t *testing.T) {
+	expect.Value(t, "vsv", nil).ToBe(nil)
+}
+
 func TestToCountString(t *testing.T) {
 	expect.Value(t, "foo", "xxx").ToCount(3)
 }
