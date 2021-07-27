@@ -9,5 +9,8 @@ func sameType(a, b interface{}) bool {
 }
 
 func typeName(a interface{}) string {
+	if a == nil {
+		return "<nil>"
+	}
 	return reflect.TypeOf(a).String()
 }
