@@ -118,6 +118,7 @@ func (e Val) NotToBe(unExpected interface{}) Val {
 		nl := presentations[p]
 		e.t.Errorf("expected %v to NOT be%v%v%vbut it is", e.name, nl, x, nl)
 	}
+
 	return e
 }
 
@@ -155,9 +156,11 @@ func (e Val) ToBeAbout(expected, delta float64) Val {
 	default:
 		e.t.Fatalf("ToBeAbout() can only work on number values but it's called on type %T", e.value)
 	}
+
 	if val < expected-delta || val > expected+delta {
 		e.t.Errorf("expected %v to be %v±%v but it is %v", e.name, expected, delta, e.value)
 	}
+
 	return e
 }
 
@@ -169,9 +172,11 @@ func (e Val) ToHavePrefix(prefix string) Val {
 	if !is {
 		e.t.Fatalf("ToHavePrefix must only be called on a string value")
 	}
+
 	if !strings.HasPrefix(actual, prefix) {
 		e.t.Errorf("expected %v to have prefix '%v' but it is '%v'", e.name, prefix, actual)
 	}
+
 	return e
 }
 
@@ -183,9 +188,11 @@ func (e Val) ToHaveSuffix(suffix string) Val {
 	if !is {
 		e.t.Fatalf("ToHaveSuffix must only be called on a string value")
 	}
+
 	if !strings.HasSuffix(actual, suffix) {
 		e.t.Errorf("expected %v to have suffix '%v' but it is '%v'", e.name, suffix, actual)
 	}
+
 	return e
 }
 
@@ -206,6 +213,7 @@ func (e Val) Message() Val {
 	if !is {
 		e.t.Fatalf("Message must only be called on a error value")
 	}
+
 	return Val{
 		ex:    e.ex,
 		name:  e.name + " message",
@@ -224,6 +232,7 @@ func (e Val) index(i int) Val {
 	if i < 0 {
 		i = l + i
 	}
+
 	if i >= l || i < 0 {
 		e.t.Fatalf("%v has length of %, index %v is out of bounds", e.name, l, i)
 	}
@@ -255,6 +264,7 @@ func isIndexable(v interface{}) bool {
 	case reflect.String:
 		return true
 	}
+
 	return false
 }
 
@@ -271,5 +281,6 @@ func hasLen(v interface{}) bool {
 	case reflect.String:
 		return true
 	}
+
 	return false
 }

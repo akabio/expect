@@ -1,0 +1,16 @@
+linters:
+  enable-all: true
+
+  disable:
+    - paralleltest
+    - testpackage
+    - nlreturn
+    - exhaustive
+    - exhaustivestruct
+    - gochecknoglobals
+    - cyclop
+    - goerr113
+    - gofumpt
+    - stylecheck
+    - forbidigo
+    - godot

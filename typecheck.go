@@ -17,6 +17,7 @@ func typeName(a interface{}) string {
 	if a == nil {
 		return "<nil>"
 	}
+
 	return reflect.TypeOf(a).String()
 }
 
@@ -29,5 +30,6 @@ func isNil(a interface{}) bool {
 	case reflect.Ptr, reflect.Map, reflect.Chan, reflect.Slice:
 		return reflect.ValueOf(a).IsNil()
 	}
+
 	return false
 }

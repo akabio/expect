@@ -16,8 +16,11 @@ var gmtM1 = func() *time.Location {
 }()
 
 func runTest(t *testing.T, i interface{}, x, xp string) {
+	t.Helper()
+
 	actual, p := formatOne(i)
 	aPad := presentations[p]
+
 	Value(t, fmt.Sprintf("f(%v %T)", i, i), actual).ToBe(x)
 	Value(t, fmt.Sprintf("f(%v %T) pad", i, i), aPad).ToBe(xp)
 }

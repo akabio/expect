@@ -102,7 +102,9 @@ but it is
 
 func TestNilTypeToBeNil(t *testing.T) {
 	type vs struct{}
+
 	var vsv *vs
+
 	expect.Value(t, "vsv", vsv).ToBe(nil)
 }
 

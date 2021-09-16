@@ -44,7 +44,6 @@ func format(i interface{}) (string, presentation, bool) {
 	switch kind {
 	case reflect.Ptr:
 		// de-reference ptr and call formater again
-
 		if isNil(i) {
 			return "<nil>", compact, false
 		}
@@ -57,8 +56,10 @@ func format(i interface{}) (string, presentation, bool) {
 			if len(y) > 0 && y[len(y)-1] == '\n' {
 				y = y[:len(y)-1]
 			}
+
 			return string(y), block, false
 		}
+
 		return fmt.Sprintf("%v", i), compact, false
 	}
 
@@ -68,6 +69,7 @@ func format(i interface{}) (string, presentation, bool) {
 func formatBoth(x interface{}, v interface{}) (string, string, presentation) {
 	xf, xd, dx := format(x)
 	vf, vd, dv := format(v)
+
 	if vd == block || xd == block {
 		return xf, vf, block
 	}
@@ -98,8 +100,10 @@ func indent(v string, pres presentation) string {
 		for i := range lines {
 			lines[i] = "    " + lines[i]
 		}
+
 		return strings.Join(lines, "\n")
 	}
+
 	return v
 }
 
@@ -107,5 +111,6 @@ func del(v string, d bool) string {
 	if d {
 		return "'" + v + "'"
 	}
+
 	return v
 }
