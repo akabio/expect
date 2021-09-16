@@ -15,14 +15,14 @@ func TestFailNotToBe(t *testing.T) {
 	l := test.New(t, func(t expect.Test) {
 		expect.Value(t, "number", 7).NotToBe(7)
 	})
-	l.ExpectMessageNoLoc(0).ToBe("expected number to NOT be 7 but it is")
+	l.ExpectMessage(0).ToBe("expected number to NOT be 7 but it is")
 }
 
 func TestFailNotToBeSlice(t *testing.T) {
 	l := test.New(t, func(t expect.Test) {
 		expect.Value(t, "numbers", []int{3, 2, 1}).NotToBe([]int{3, 2, 1})
 	})
-	l.ExpectMessageNoLoc(0).ToBe(`expected numbers to NOT be
+	l.ExpectMessage(0).ToBe(`expected numbers to NOT be
 - 3
 - 2
 - 1

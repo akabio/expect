@@ -6,8 +6,10 @@ func sameType(a, b interface{}) bool {
 	if isNil(a) && isNil(b) {
 		return true
 	}
+
 	at := reflect.TypeOf(a)
 	bt := reflect.TypeOf(b)
+
 	return at == bt
 }
 
@@ -22,6 +24,7 @@ func isNil(a interface{}) bool {
 	if a == nil {
 		return true
 	}
+
 	switch reflect.TypeOf(a).Kind() {
 	case reflect.Ptr, reflect.Map, reflect.Chan, reflect.Slice:
 		return reflect.ValueOf(a).IsNil()

@@ -38,7 +38,7 @@ func (e *Expect) Value(t Test, name string, val interface{}) Val {
 	return Val{
 		ex:    e,
 		name:  name,
-		t:     &locationDeco{t: t},
+		t:     t,
 		value: val,
 	}
 }
@@ -59,6 +59,8 @@ type Val struct {
 
 // ToBe asserts that the value is deeply equals to expected value.
 func (e Val) ToBe(expected interface{}) Val {
+	e.t.Helper()
+
 	if !sameType(e.value, expected) {
 		e.t.Errorf("expected %v to be of type %v but it is of type %v", e.name, typeName(expected), typeName(e.value))
 		return e
@@ -86,11 +88,14 @@ func (e Val) ToBe(expected interface{}) Val {
 			e.t.Errorf("expected %v to be%v%v%vbut it is%v%v", e.name, pres, indent(x, del), pres, pres, indent(v, del))
 		}
 	}
+
 	return e
 }
 
 // ToCount asserts that the list/map/chan/string has c elements.
 func (e Val) ToCount(c int) Val {
+	e.t.Helper()
+
 	if !hasLen(e.value) {
 		e.t.Fatalf("%v is not a datatype with a length (array, slice, map, chan, string)", e.name)
 		return e
@@ -106,6 +111,8 @@ func (e Val) ToCount(c int) Val {
 
 // NotToBe asserts that the value is not deeply equals to expected value.
 func (e Val) NotToBe(unExpected interface{}) Val {
+	e.t.Helper()
+
 	if reflect.DeepEqual(e.value, unExpected) {
 		x, p := formatOne(unExpected)
 		nl := presentations[p]
@@ -117,6 +124,8 @@ func (e Val) NotToBe(unExpected interface{}) Val {
 // ToBeAbout asserts that the number is in deltas range of expected value.
 // Only works for numbers.
 func (e Val) ToBeAbout(expected, delta float64) Val {
+	e.t.Helper()
+
 	val := 0.0
 	switch t := e.value.(type) {
 	case float32:
@@ -154,6 +163,8 @@ func (e Val) ToBeAbout(expected, delta float64) Val {
 
 // ToHavePrefix asserts that the string value starts with the provided prefix.
 func (e Val) ToHavePrefix(prefix string) Val {
+	e.t.Helper()
+
 	actual, is := e.value.(string)
 	if !is {
 		e.t.Fatalf("ToHavePrefix must only be called on a string value")
@@ -166,6 +177,8 @@ func (e Val) ToHavePrefix(prefix string) Val {
 
 // ToHaveSuffix asserts that the string value ends with the provided sufix.
 func (e Val) ToHaveSuffix(suffix string) Val {
+	e.t.Helper()
+
 	actual, is := e.value.(string)
 	if !is {
 		e.t.Fatalf("ToHaveSuffix must only be called on a string value")

@@ -12,7 +12,7 @@ func TestExample(t *testing.T) {
 	l := test.New(t, func(t expect.Test) {
 		expect.Value(t, "the guy", "Peter").ToBe("Steven")
 	})
-	l.ExpectMessage(0).ToBe("expect_test.go:13 TestExample.func1\nexpected the guy to be 'Steven' but it is 'Peter'")
+	l.ExpectMessage(0).ToBe("expected the guy to be 'Steven' but it is 'Peter'")
 }
 
 func TestErrorToHaveMessage(t *testing.T) {
@@ -28,7 +28,7 @@ func TestIntToNotAllowMessageMethod(t *testing.T) {
 	l := test.New(t, func(t expect.Test) {
 		expect.Value(t, "int", 0).Message().ToBe("0")
 	})
-	l.ExpectMessageNoLoc(0).ToBe("Message must only be called on a error value")
+	l.ExpectMessage(0).ToBe("Message must only be called on a error value")
 }
 
 func TestColoredOutputSpaceChars(t *testing.T) {
@@ -38,5 +38,5 @@ func TestColoredOutputSpaceChars(t *testing.T) {
 		expect.Value(t, "spaces", " 	\n----------------------").ToBe("----------------------")
 		expect.Default.Output = o
 	})
-	l.ExpectMessageNoLoc(0).ToBe("[31m․↦↵\n[0m----------------------")
+	l.ExpectMessage(0).ToBe("[31m․↦↵\n[0m----------------------")
 }

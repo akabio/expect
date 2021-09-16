@@ -22,7 +22,7 @@ func TestFailToCountString(t *testing.T) {
 	})
 
 	l.ExpectMessages().ToCount(1)
-	l.ExpectMessageNoLoc(0).ToBe("expected foo to have 1 elements but it has 3 elements")
+	l.ExpectMessage(0).ToBe("expected foo to have 1 elements but it has 3 elements")
 }
 
 func TestErrorToCountInt(t *testing.T) {
@@ -30,5 +30,5 @@ func TestErrorToCountInt(t *testing.T) {
 		expect.Value(t, "foo", 2).ToCount(2)
 	})
 	l.ExpectMessages().ToCount(1)
-	l.ExpectMessageNoLoc(0).ToBe("foo is not a datatype with a length (array, slice, map, chan, string)")
+	l.ExpectMessage(0).ToBe("foo is not a datatype with a length (array, slice, map, chan, string)")
 }
