@@ -86,6 +86,33 @@ but it is
     peter: 3`)
 }
 
+func TestToBeArray(t *testing.T) {
+	a := [3]string{"a", "b", "c"}
+	b := [3]string{"a", "b", "c"}
+	expect.Value(t, "array", a).ToBe(b)
+}
+
+func TestArrayCount(t *testing.T) {
+	a := [3]string{"a", "b", "c"}
+	expect.Value(t, "array", a).ToCount(3)
+}
+
+func TestFailToBeArray(t *testing.T) {
+	a := [3]string{"a", "b", "c"}
+	b := [3]string{"a", "b", "s"}
+	l := test.New(t, func(t expect.Test) {
+		expect.Value(t, "array", a).ToBe(b)
+	})
+	l.ExpectMessageNoLoc(0).ToBe(`expected array to be
+    - a
+    - b
+    - s
+but it is
+    - a
+    - b
+    - c`)
+}
+
 func TestNilTypeToBeNil(t *testing.T) {
 	type vs struct{}
 	var vsv *vs

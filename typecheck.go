@@ -23,7 +23,7 @@ func isNil(a interface{}) bool {
 		return true
 	}
 	switch reflect.TypeOf(a).Kind() {
-	case reflect.Ptr, reflect.Map, reflect.Array, reflect.Chan, reflect.Slice:
+	case reflect.Ptr, reflect.Map, reflect.Chan, reflect.Slice:
 		return reflect.ValueOf(a).IsNil()
 	}
 	return false
