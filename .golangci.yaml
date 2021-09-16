@@ -14,3 +14,7 @@ linters:
     - stylecheck
     - forbidigo
     - godot
+    - maligned
+    - interfacer
+    - scopelint
+    - golint
