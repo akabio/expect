@@ -92,7 +92,7 @@ func (e Val) ToBe(expected interface{}) Val {
 	return e
 }
 
-// ToCount asserts that the list/map/chan/string has c elements.
+// ToCount asserts that the list/map/chan/string has c elements. Strings use the number of unicode chars.
 func (e Val) ToCount(c int) Val {
 	e.t.Helper()
 
@@ -102,6 +102,12 @@ func (e Val) ToCount(c int) Val {
 	}
 
 	l := reflect.ValueOf(e.value).Len()
+
+	str, isStr := e.value.(string)
+	if isStr {
+		l = len([]rune(str))
+	}
+
 	if l != c {
 		e.t.Errorf("expected %v to have %v elements but it has %v elements", e.name, c, l)
 	}
@@ -222,22 +228,57 @@ func (e Val) Message() Val {
 	}
 }
 
-func (e Val) index(i int) Val {
+func (e Val) index(t Test, i int) Val {
+	t.Helper()
+
+	calcIndex := func(l int) int {
+		e.t.Helper()
+
+		if l == 0 {
+			if i == -1 {
+				e.t.Fatalf("%v is empty, can not take last element", e.name)
+			}
+
+			if i == 0 {
+				e.t.Fatalf("%v is empty, can not take first element", e.name)
+			}
+		}
+
+		in := i
+		if in < 0 {
+			in = l + in
+		}
+
+		if in >= l || in < 0 {
+			e.t.Fatalf("%v has length of %v, index %v is out of bounds", e.name, l, i)
+		}
+
+		return in
+	}
+
 	if !isIndexable(e.value) {
-		e.t.Fatalf("%v is not a indexable datatype (array, slice, string)", e.name)
+		e.t.Fatalf("%v is not an indexable datatype", e.name)
 		return e
 	}
 
-	l := reflect.ValueOf(e.value).Len()
-	if i < 0 {
-		i = l + i
+	// strings are handled as rune slices
+	str, isStr := e.value.(string)
+	if isStr {
+		runes := []rune(str)
+		i = calcIndex(len(runes))
+
+		return Val{
+			ex:    e.ex,
+			name:  "char at index " + strconv.Itoa(i) + " of " + e.name,
+			t:     e.t,
+			value: string(runes[i : i+1]),
+		}
 	}
 
-	if i >= l || i < 0 {
-		e.t.Fatalf("%v has length of %, index %v is out of bounds", e.name, l, i)
-	}
+	rVal := reflect.ValueOf(e.value)
+	i = calcIndex(rVal.Len())
 
-	v := reflect.ValueOf(e.value).Index(i)
+	v := rVal.Index(i)
 
 	return Val{
 		ex:    e.ex,
@@ -248,11 +289,13 @@ func (e Val) index(i int) Val {
 }
 
 func (e Val) First() Val {
-	return e.index(0)
+	e.t.Helper()
+	return e.index(e.t, 0)
 }
 
 func (e Val) Last() Val {
-	return e.index(-1)
+	e.t.Helper()
+	return e.index(e.t, -1)
 }
 
 func isIndexable(v interface{}) bool {

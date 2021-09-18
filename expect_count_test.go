@@ -7,13 +7,18 @@ import (
 	"gitlab.com/akabio/expect/internal/test"
 )
 
-func TestArrayCount(t *testing.T) {
+func TestToCountArray(t *testing.T) {
 	a := [3]string{"a", "b", "c"}
 	expect.Value(t, "array", a).ToCount(3)
 }
 
 func TestToCountString(t *testing.T) {
 	expect.Value(t, "foo", "xxx").ToCount(3)
+	expect.Value(t, "foo", "日本のジャガイモ").ToCount(8)
+}
+
+func TestToCountMap(t *testing.T) {
+	expect.Value(t, "map", map[int]int{1: 2, 2: 3}).ToCount(2)
 }
 
 func TestFailToCountString(t *testing.T) {
