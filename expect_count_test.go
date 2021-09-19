@@ -21,6 +21,15 @@ func TestToCountMap(t *testing.T) {
 	expect.Value(t, "map", map[int]int{1: 2, 2: 3}).ToCount(2)
 }
 
+func TestToCountChannel(t *testing.T) {
+	ch := make(chan int, 10)
+	ch <- 1
+	ch <- 2
+	expect.Value(t, "channel", ch).ToCount(2)
+	<-ch
+	expect.Value(t, "channel", ch).ToCount(1)
+}
+
 func TestFailToCountString(t *testing.T) {
 	l := test.New(t, func(t expect.Test) {
 		expect.Value(t, "foo", "xxx").ToCount(1)
