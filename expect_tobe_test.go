@@ -1,6 +1,9 @@
 package expect_test
 
 import (
+	"encoding/json"
+	"fmt"
+	"strconv"
 	"testing"
 
 	"gitlab.com/akabio/expect"
@@ -76,6 +79,39 @@ func TestFailToBeMap(t *testing.T) {
 but it is
     johan: 2
     peter: 3`)
+}
+
+type a string
+
+func (a a) String() string {
+	return string(a)
+}
+
+type b int
+
+func (b b) String() string {
+	return strconv.Itoa(int(b))
+}
+
+func (b b) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b.String())
+}
+
+func TestFailToBeWithDifferentMapSubtype(t *testing.T) {
+	l := test.New(t, func(t expect.Test) {
+		expect.Value(t, "names", map[string]fmt.Stringer{"B": a("2"), "A": a("2")}).
+			ToBe(map[string]fmt.Stringer{"A": b(2), "B": b(2)})
+	})
+	l.ExpectMessage(0).ToBe(`expected names to be
+    (map[string]fmt.Stringer) (len=2) {
+      (string) (len=1) "A": (expect_test.b) 2,
+      (string) (len=1) "B": (expect_test.b) 2
+    }
+but it is
+    (map[string]fmt.Stringer) (len=2) {
+      (string) (len=1) "A": (expect_test.a) (len=1) 2,
+      (string) (len=1) "B": (expect_test.a) (len=1) 2
+    }`)
 }
 
 func TestToBeArray(t *testing.T) {

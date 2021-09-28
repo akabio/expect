@@ -6,8 +6,17 @@ import (
 	"strings"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/ghodss/yaml"
 )
+
+func init() {
+	fmt.Println(spew.Config.SortKeys)
+	spew.Config.SortKeys = true
+	spew.Config.SpewKeys = true
+	spew.Config.Indent = "  "
+	spew.Config.DisableCapacities = true
+}
 
 type presentation int
 
@@ -69,6 +78,14 @@ func format(i interface{}) (string, presentation, bool) {
 func formatBoth(x interface{}, v interface{}) (string, string, presentation) {
 	xf, xd, dx := format(x)
 	vf, vd, dv := format(v)
+
+	if xf == vf {
+		// if both serialized representations are the same we use a representation with all subtypes included
+		xf = spew.Sdump(x)
+		vf = spew.Sdump(v)
+		xf = strings.TrimSpace(xf)
+		vf = strings.TrimSpace(vf)
+	}
 
 	if vd == block || xd == block {
 		return xf, vf, block
