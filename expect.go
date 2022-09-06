@@ -10,8 +10,10 @@ import (
 
 type output string
 
-var PlainOutput = output("plain")
-var ColoredDiffOutput = output("coloredDiffOutput")
+var (
+	PlainOutput       = output("plain")
+	ColoredDiffOutput = output("coloredDiffOutput")
+)
 
 type Expect struct {
 	Output output
@@ -197,6 +199,17 @@ func (e Val) ToHaveSuffix(suffix string) Val {
 
 	if !strings.HasSuffix(actual, suffix) {
 		e.t.Errorf("expected %v to have suffix '%v' but it is '%v'", e.name, suffix, actual)
+	}
+
+	return e
+}
+
+func (e Val) ToBeType(t any) Val {
+	t1 := reflect.TypeOf(e.value)
+	t2 := reflect.TypeOf(t)
+
+	if t1 != t2 {
+		e.t.Errorf("expected %v to be of type '%v' but it is of type '%v'", e.name, t2, t1)
 	}
 
 	return e

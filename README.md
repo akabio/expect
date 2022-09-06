@@ -77,3 +77,7 @@ Asserts that the value is not deeply equal to the provided value.
 ### ToBeAbout
 
 Asserts that the number is about expected value with a margin of error of provided delta.
+
+### ToBeType
+
+Asserts that the type of the value is the same of the value given as parameter.
