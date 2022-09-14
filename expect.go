@@ -205,6 +205,8 @@ func (e Val) ToHaveSuffix(suffix string) Val {
 }
 
 func (e Val) ToBeType(t any) Val {
+	e.t.Helper()
+	
 	t1 := reflect.TypeOf(e.value)
 	t2 := reflect.TypeOf(t)
 
