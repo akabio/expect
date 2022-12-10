@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"testing"
 
-	"gitlab.com/akabio/expect"
-	"gitlab.com/akabio/expect/internal/test"
+	"github.com/akabio/expect"
+	"github.com/akabio/expect/internal/test"
 )
 
 func TestToBeString(t *testing.T) {

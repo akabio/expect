@@ -1,4 +1,4 @@
-module gitlab.com/akabio/expect
+module github.com/akabio/expect
 
 go 1.18
 
