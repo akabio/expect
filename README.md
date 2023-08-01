@@ -81,3 +81,14 @@ Asserts that the number is about expected value with a margin of error of provid
 ### ToBeType
 
 Asserts that the type of the value is the same of the value given as parameter.
+
+### ToBeSnapshot(filename)
+
+ToBeSnapshot checks if the value is the same as what's in the given file.
+
+- If the file isn't there, it will make a new one. You can look at it
+  and change it if you need to.
+
+- If the value doesn't match what's in the file, the test will fail.
+  It will also create a new file with the same name but with a ".current"
+  extension. This file will contain the failed content.
