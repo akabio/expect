@@ -50,6 +50,15 @@ func TestMatchAfterMismatchSnapshot(t *testing.T) {
 	expect.Error(t, err).Message().ToBe("open testdata/ss1.txt.current: no such file or directory")
 }
 
+func TestCreateSnapshotFromBytes(t *testing.T) {
+	cleanTestData(t)
+	expect.Value(t, "content", []byte{1, 2, 3}).ToBeSnapshot("testdata/ss1.bin")
+
+	data, err := os.ReadFile("testdata/ss1.bin")
+	expect.Error(t, err).ToBe(nil)
+	expect.Value(t, "content", data).ToBe([]byte{1, 2, 3})
+}
+
 func cleanTestData(t *testing.T) {
 	err := os.RemoveAll("testdata")
 	if err != nil {

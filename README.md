@@ -85,6 +85,7 @@ Asserts that the type of the value is the same of the value given as parameter.
 ### ToBeSnapshot(filename)
 
 ToBeSnapshot checks if the value is the same as what's in the given file.
+The value can be a string or a []byte slice.
 
 - If the file isn't there, it will make a new one. You can look at it
   and change it if you need to.

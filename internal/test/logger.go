@@ -66,8 +66,10 @@ func (l *Logger) ExpectMessages() expect.Val {
 
 // ExpectMessage returns the message at given index.
 func (l *Logger) ExpectMessage(i int) expect.Val {
+	l.t.Helper()
 	if len(l.Messages) <= i {
-		l.t.Errorf("there is not message at index %v", i)
+		l.t.Errorf("there is no message at index %v", i)
+		return expect.Value(l.t, "message", "")
 	}
 
 	return expect.Value(l.t, "message", l.Messages[i])
