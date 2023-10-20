@@ -1,6 +1,7 @@
 package expect
 
 import (
+	"encoding/json"
 	"reflect"
 	"strconv"
 	"strings"
@@ -117,6 +118,41 @@ func (e Val) ToCount(c int) Val {
 	return e
 }
 
+// ToContain checks if the expected value is in the expected slice or if the string contains a substring or not.
+// Does a deep equal for slices.
+func (e Val) ToContain(expected interface{}) Val {
+	v := reflect.ValueOf(e.value)
+	if v.Kind() == reflect.String {
+		if !strings.Contains(v.String(), expected.(string)) {
+			e.t.Errorf("expected %v to be in %v %v but it is not", expected, e.name, e.value)
+		}
+
+		return e
+	}
+
+	if v.Kind() != reflect.Slice {
+		e.t.Fatalf("expected %v to be string or slice, but it is a %T", e.value, e.value)
+	}
+
+	for i := 0; i < v.Len(); i++ {
+		element := v.Index(i).Interface()
+		if reflect.DeepEqual(element, expected) {
+			return e
+		}
+	}
+
+	exp, erre := json.Marshal(expected)
+	val, errv := json.Marshal(e.value)
+
+	if erre != nil || errv != nil {
+		e.t.Errorf("expected %v to be in %v %v but it is not", expected, e.name, e.value)
+	} else {
+		e.t.Errorf("expected %v to be in %v %v but it is not", string(exp), e.name, string(val))
+	}
+
+	return e
+}
+
 // NotToBe asserts that the value is not deeply equals to expected value.
 func (e Val) NotToBe(unExpected interface{}) Val {
 	e.t.Helper()
@@ -206,7 +242,7 @@ func (e Val) ToHaveSuffix(suffix string) Val {
 
 func (e Val) ToBeType(t any) Val {
 	e.t.Helper()
-	
+
 	t1 := reflect.TypeOf(e.value)
 	t2 := reflect.TypeOf(t)
 
