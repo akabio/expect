@@ -136,8 +136,11 @@ func isSameImage(t Test, snapshot, current image.Image) bool {
 
 	for y := 0; y < snapshotSize.Y; y++ {
 		for x := 0; x < snapshotSize.X; x++ {
-			if snapshot.At(x, y) != current.At(x, y) {
-				t.Errorf("images are not the same")
+			rs, gs, bs, as := snapshot.At(x, y).RGBA()
+			rc, gc, bc, ac := current.At(x, y).RGBA()
+
+			if rs != rc || gs != gc || bs != bc || as != ac {
+				t.Errorf("images are not the same at %v, %v", x, y)
 				return false
 			}
 		}
