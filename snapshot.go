@@ -10,6 +10,7 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 
+	"github.com/ghodss/yaml"
 	"golang.org/x/exp/slices"
 )
 
@@ -29,14 +30,9 @@ func (e Val) ToBeSnapshot(path string) Val {
 		e.t.Fatalf("failed to read snaphsot %v: %v", path, err)
 	}
 
-	currentString, isString := e.value.(string)
-	current, isBytes := e.value.([]byte)
-	if !isString && !isBytes {
-		e.t.Fatalf("value of .ToBeSnaphsot must be of type string or []byte but it is %T", e.value)
-	}
-
-	if isString {
-		current = []byte(currentString)
+	current, err := asBytes(e.value)
+	if err != nil {
+		e.t.Error(err)
 	}
 
 	if existing == nil {
@@ -59,6 +55,17 @@ func (e Val) ToBeSnapshot(path string) Val {
 	}
 
 	return e
+}
+
+func asBytes(in any) ([]byte, error) {
+	switch t := in.(type) {
+	case []byte:
+		return t, nil
+	case string:
+		return []byte(t), nil
+	default:
+		return yaml.Marshal(in)
+	}
 }
 
 func (e Val) ToBeSnapshotImage(path string) Val {

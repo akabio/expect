@@ -75,11 +75,16 @@ func TestCreateSnapshotFromBytes(t *testing.T) {
 	expect.Value(t, "content", data).ToBe([]byte{1, 2, 3})
 }
 
-func cleanTestData(t *testing.T) {
-	err := os.RemoveAll("testdata/volatile")
-	if err != nil {
-		t.Fatal("Failed to clear testdata folder")
-	}
+func TestCreateSnapshotAsYAML(t *testing.T) {
+	cleanTestData(t)
+	expect.Value(t, "content", map[string][]string{
+		"foo": {"1", "2"},
+	},
+	).ToBeSnapshot("testdata/volatile/map.yaml")
+
+	data, err := os.ReadFile("testdata/volatile/map.yaml")
+	expect.Error(t, err).ToBe(nil)
+	expect.Value(t, "content", string(data)).ToBe("foo:\n- \"1\"\n- \"2\"\n")
 }
 
 func TestCreateSnapshotImage(t *testing.T) {
@@ -105,4 +110,11 @@ func TestCreateSnapshotImageDifferent(t *testing.T) {
 	})
 	l.ExpectMessages().ToCount(1)
 	l.ExpectMessage(0).ToBe("images are not the same at 76, 20")
+}
+
+func cleanTestData(t *testing.T) {
+	err := os.RemoveAll("testdata/volatile")
+	if err != nil {
+		t.Fatal("Failed to clear testdata folder")
+	}
 }
