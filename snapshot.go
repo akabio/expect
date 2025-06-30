@@ -84,9 +84,19 @@ func (e Val) ToBeSnapshotImage(path string) Val {
 		e.t.Fatalf("failed to read snaphsot %v: %v", path, err)
 	}
 
-	img, isImage := e.value.(image.Image)
-	if !isImage {
-		e.t.Fatalf("value of .ToBeSnaphsotImage must be of type image but it is %T", e.value)
+	var img image.Image
+
+	switch t := e.value.(type) {
+	case image.Image:
+		img = t
+	case []byte:
+		img, _, err = image.Decode(bytes.NewReader(t))
+		if err != nil {
+			e.t.Fatalf("[]byte value of .ToBeSnapshotImage is not an image, %v", err)
+		}
+
+	default:
+		e.t.Fatalf("value of .ToBeSnapshotImage must be of type image or []byte but it is %T", e.value)
 	}
 
 	// snapshot does not exist, create it
