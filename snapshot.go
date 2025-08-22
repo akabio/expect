@@ -8,6 +8,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"strings"
 
 	_ "image/gif"
 	_ "image/jpeg"
@@ -95,6 +96,10 @@ func (s snapshotImageOptionExact) apply(o *snapshotImageOptions) {
 func (e Val) ToBeSnapshotImage(path string, opts ...SnapshotImageOption) Val {
 	e.t.Helper()
 
+	if !strings.HasSuffix(path, ".png") {
+		e.t.Fatalf("only png format is supported, pleas add a .png extension to the snapshot path")
+	}
+
 	optOb := &snapshotImageOptions{
 		colorMatchFactor: 0.9,
 		matchRatio:       0.99,
@@ -159,8 +164,8 @@ func (e Val) ToBeSnapshotImage(path string, opts ...SnapshotImageOption) Val {
 	isSame, diffImg := isSameImage(e.t, snapshotImage, img, optOb)
 	if isSame {
 		// all is well, snapshot is matched, remove a possible current version
-		os.RemoveAll(path + ".current.png")
-		os.RemoveAll(path + ".diff.png")
+		os.RemoveAll(currentPath(path))
+		os.RemoveAll(diffPath(path))
 		return e
 	}
 
@@ -168,28 +173,36 @@ func (e Val) ToBeSnapshotImage(path string, opts ...SnapshotImageOption) Val {
 	current := bytes.NewBuffer(nil)
 	err = png.Encode(current, img)
 	if err != nil {
-		e.t.Fatalf("failed encode snapshot image %v", path+".current.png")
+		e.t.Fatalf("failed encode snapshot image %v", currentPath(path))
 	}
 
-	err = os.WriteFile(path+".current.png", current.Bytes(), 0o644)
+	err = os.WriteFile(currentPath(path), current.Bytes(), 0o644)
 	if err != nil {
-		e.t.Fatalf("failed to write snapshot %v", path+".current.png")
+		e.t.Fatalf("failed to write snapshot %v", currentPath(path))
 	}
 
 	if diffImg != nil {
 		diff := bytes.NewBuffer(nil)
 		err = png.Encode(diff, diffImg)
 		if err != nil {
-			e.t.Fatalf("failed encode diff image %v", path+".diff.png")
+			e.t.Fatalf("failed encode diff image %v", diffPath(path))
 		}
 
-		err = os.WriteFile(path+".diff.png", diff.Bytes(), 0o644)
+		err = os.WriteFile(diffPath(path), diff.Bytes(), 0o644)
 		if err != nil {
-			e.t.Fatalf("failed to diff snapshot %v", path+".diff.png")
+			e.t.Fatalf("failed to diff snapshot %v", diffPath(path))
 		}
 	}
 
 	return e
+}
+
+func currentPath(i string) string {
+	return strings.TrimSuffix(i, ".png") + ".current.png"
+}
+
+func diffPath(i string) string {
+	return strings.TrimSuffix(i, ".png") + ".diff.png"
 }
 
 func isSameImage(t Test, snapshot, current image.Image, opts *snapshotImageOptions) (bool, image.Image) {
