@@ -3,7 +3,9 @@ package expect
 import (
 	"bytes"
 	"image"
+	"image/color"
 	"image/png"
+	"math"
 	"os"
 	"path/filepath"
 
@@ -68,8 +70,39 @@ func asBytes(in any) ([]byte, error) {
 	}
 }
 
-func (e Val) ToBeSnapshotImage(path string) Val {
+type SnapshotImageOption interface {
+	apply(o *snapshotImageOptions)
+}
+
+type snapshotImageOptions struct {
+	colorMatchFactor float64
+	matchRatio       float64
+}
+
+type snapshotImageOptionExact int
+
+var SnapshotImageOptionExact snapshotImageOptionExact
+
+func (s snapshotImageOptionExact) apply(o *snapshotImageOptions) {
+	o.colorMatchFactor = 1
+	o.matchRatio = 1
+}
+
+// ToBeSnapshotImage saves the image in the first run, in later runs, compares the image to the saved one.
+// If they are not the same it will write a .current.pn and .diff.png version of the image.
+// The images match by default when 90% of the pixels colors are by less than 10% off.
+// The Parameter SnapshotImageOptionExact forces the images to be exactly the same.
+func (e Val) ToBeSnapshotImage(path string, opts ...SnapshotImageOption) Val {
 	e.t.Helper()
+
+	optOb := &snapshotImageOptions{
+		colorMatchFactor: 0.9,
+		matchRatio:       0.9,
+	}
+
+	for _, opt := range opts {
+		opt.apply(optOb)
+	}
 
 	folder := filepath.Dir(path)
 	if folder != "." {
@@ -123,45 +156,85 @@ func (e Val) ToBeSnapshotImage(path string) Val {
 		e.t.Fatalf("failed to read snapshot %v", err)
 	}
 
-	if isSameImage(e.t, snapshotImage, img) {
+	isSame, diffImg := isSameImage(e.t, snapshotImage, img, optOb)
+	if isSame {
 		// all is well, snapshot is matched, remove a possible current version
-		os.RemoveAll(path + ".current")
+		os.RemoveAll(path + ".current.png")
+		os.RemoveAll(path + ".diff.png")
 		return e
 	}
 
 	// not the same image, write current output
-	err = png.Encode(encoded, img)
+	current := bytes.NewBuffer(nil)
+	err = png.Encode(current, img)
 	if err != nil {
-		e.t.Fatalf("failed encode snapshot image %v", path+".current")
+		e.t.Fatalf("failed encode snapshot image %v", path+".current.png")
 	}
 
-	err = os.WriteFile(path+".current", encoded.Bytes(), 0o644)
+	err = os.WriteFile(path+".current.png", current.Bytes(), 0o644)
 	if err != nil {
-		e.t.Fatalf("failed to write snapshot %v", path+".current")
+		e.t.Fatalf("failed to write snapshot %v", path+".current.png")
+	}
+
+	diff := bytes.NewBuffer(nil)
+	err = png.Encode(diff, diffImg)
+	if err != nil {
+		e.t.Fatalf("failed encode diff image %v", path+".diff.png")
+	}
+
+	err = os.WriteFile(path+".diff.png", diff.Bytes(), 0o644)
+	if err != nil {
+		e.t.Fatalf("failed to diff snapshot %v", path+".diff.png")
 	}
 
 	return e
 }
 
-func isSameImage(t Test, snapshot, current image.Image) bool {
+func isSameImage(t Test, snapshot, current image.Image, opts *snapshotImageOptions) (bool, image.Image) {
 	snapshotSize := snapshot.Bounds().Size()
 	currentSize := current.Bounds().Size()
 	if snapshotSize != currentSize {
 		t.Errorf("expected image size to be %v but it is %v", snapshotSize, currentSize)
-		return false
+		return false, nil
 	}
+
+	diffImg := image.NewRGBA(snapshot.Bounds())
+
+	mismatches := 0
 
 	for y := 0; y < snapshotSize.Y; y++ {
 		for x := 0; x < snapshotSize.X; x++ {
 			rs, gs, bs, as := snapshot.At(x, y).RGBA()
 			rc, gc, bc, ac := current.At(x, y).RGBA()
 
-			if rs != rc || gs != gc || bs != bc || as != ac {
-				t.Errorf("images are not the same at %v, %v", x, y)
-				return false
+			rd := getDiffFor(rs, rc)
+			gd := getDiffFor(gs, gc)
+			bd := getDiffFor(bs, bc)
+			ad := getDiffFor(as, ac)
+
+			rb := math.Min(255, rd*3*255)
+			gb := math.Min(255, gd*3*255)
+			bb := math.Min(255, bd*3*255)
+
+			diffImg.SetRGBA(x, y, color.RGBA{R: uint8(rb), G: uint8(gb), B: uint8(bb), A: 255})
+
+			avg := (rd + gd + bd + ad) / 4
+			if avg > (1 - opts.colorMatchFactor) {
+				mismatches++
 			}
 		}
 	}
 
-	return true
+	m := float64(mismatches) / float64(snapshotSize.X*snapshotSize.Y)
+
+	if m > (1 - opts.matchRatio) {
+		t.Errorf("expected image does not match snapshot")
+		return false, diffImg
+	}
+
+	return true, nil
+}
+
+func getDiffFor(rs, rc uint32) float64 {
+	return math.Abs(float64(rs)-float64(rc)) / (256*256 - 1)
 }

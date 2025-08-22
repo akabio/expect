@@ -106,10 +106,10 @@ func TestCreateSnapshotImageDifferent(t *testing.T) {
 	cleanTestData(t)
 
 	l := test.New(t, func(t expect.Test) {
-		expect.Value(t, "content", sampleImage).ToBeSnapshotImage("testdata/snapshots/sample-dirty.png")
+		expect.Value(t, "content", sampleImage).ToBeSnapshotImage("testdata/snapshots/sample-dirty.png", expect.SnapshotImageOptionExact)
 	})
 	l.ExpectMessages().ToCount(1)
-	l.ExpectMessage(0).ToBe("images are not the same at 76, 20")
+	l.ExpectMessage(0).ToBe("expected image does not match snapshot")
 }
 
 func cleanTestData(t *testing.T) {
