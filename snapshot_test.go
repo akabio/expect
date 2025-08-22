@@ -106,20 +106,20 @@ func TestCreateSnapshotImageDifferent(t *testing.T) {
 	cleanTestData(t)
 
 	l := test.New(t, func(t expect.Test) {
-		expect.Value(t, "content", sampleImage).ToBeSnapshotImage("testdata/snapshots/sample-dirty.png", expect.SnapshotImageOptionExact)
+		expect.Value(t, "content", sampleImage).ToBeSnapshotImage("testdata/snapshots/sample-dirty.png", expect.WithExact())
 	})
 	l.ExpectMessages().ToCount(1)
-	l.ExpectMessage(0).ToBe("expected image does not match snapshot")
+	l.ExpectMessage(0).ToBe("expected image does not match snapshot, 1.7% of pixels do not match")
 }
 
 func TestCreateSnapshotImageBlurred(t *testing.T) {
 	cleanTestData(t)
 
 	l := test.New(t, func(t expect.Test) {
-		expect.Value(t, "content", sampleImage).ToBeSnapshotImage("testdata/snapshots/sample-blured.png", expect.SnapshotImageOptionExact)
+		expect.Value(t, "content", sampleImage).ToBeSnapshotImage("testdata/snapshots/sample-blured.png", expect.WithExact())
 	})
 	l.ExpectMessages().ToCount(1)
-	l.ExpectMessage(0).ToBe("expected image does not match snapshot")
+	l.ExpectMessage(0).ToBe("expected image does not match snapshot, 27.8% of pixels do not match")
 }
 
 func cleanTestData(t *testing.T) {
