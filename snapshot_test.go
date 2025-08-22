@@ -112,6 +112,16 @@ func TestCreateSnapshotImageDifferent(t *testing.T) {
 	l.ExpectMessage(0).ToBe("expected image does not match snapshot")
 }
 
+func TestCreateSnapshotImageBlurred(t *testing.T) {
+	cleanTestData(t)
+
+	l := test.New(t, func(t expect.Test) {
+		expect.Value(t, "content", sampleImage).ToBeSnapshotImage("testdata/snapshots/sample-blured.png", expect.SnapshotImageOptionExact)
+	})
+	l.ExpectMessages().ToCount(1)
+	l.ExpectMessage(0).ToBe("expected image does not match snapshot")
+}
+
 func cleanTestData(t *testing.T) {
 	err := os.RemoveAll("testdata/volatile")
 	if err != nil {
