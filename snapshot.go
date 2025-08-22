@@ -176,15 +176,17 @@ func (e Val) ToBeSnapshotImage(path string, opts ...SnapshotImageOption) Val {
 		e.t.Fatalf("failed to write snapshot %v", path+".current.png")
 	}
 
-	diff := bytes.NewBuffer(nil)
-	err = png.Encode(diff, diffImg)
-	if err != nil {
-		e.t.Fatalf("failed encode diff image %v", path+".diff.png")
-	}
+	if diffImg != nil {
+		diff := bytes.NewBuffer(nil)
+		err = png.Encode(diff, diffImg)
+		if err != nil {
+			e.t.Fatalf("failed encode diff image %v", path+".diff.png")
+		}
 
-	err = os.WriteFile(path+".diff.png", diff.Bytes(), 0o644)
-	if err != nil {
-		e.t.Fatalf("failed to diff snapshot %v", path+".diff.png")
+		err = os.WriteFile(path+".diff.png", diff.Bytes(), 0o644)
+		if err != nil {
+			e.t.Fatalf("failed to diff snapshot %v", path+".diff.png")
+		}
 	}
 
 	return e
