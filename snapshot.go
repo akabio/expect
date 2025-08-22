@@ -90,14 +90,14 @@ func (s snapshotImageOptionExact) apply(o *snapshotImageOptions) {
 
 // ToBeSnapshotImage saves the image in the first run, in later runs, compares the image to the saved one.
 // If they are not the same it will write a .current.pn and .diff.png version of the image.
-// The images match by default when 90% of the pixels colors are by less than 10% off.
+// The images match by default when 99% of the pixels colors are by less than 10% off.
 // The Parameter SnapshotImageOptionExact forces the images to be exactly the same.
 func (e Val) ToBeSnapshotImage(path string, opts ...SnapshotImageOption) Val {
 	e.t.Helper()
 
 	optOb := &snapshotImageOptions{
 		colorMatchFactor: 0.9,
-		matchRatio:       0.9,
+		matchRatio:       0.99,
 	}
 
 	for _, opt := range opts {
