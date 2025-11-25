@@ -1,6 +1,6 @@
 # expect
 
-** Moved to https://github.com/byte-wright/expect **
+**Moved to https://github.com/byte-wright/expect**
 
 Go test expectations.
 
