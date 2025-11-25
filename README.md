@@ -1,5 +1,7 @@
 # expect
 
+** Moved to https://github.com/byte-wright/expect **
+
 Go test expectations.
 
 Intention of the library is to be able to write simple readable tests which produce easy to understand messages when the expectation fails.
